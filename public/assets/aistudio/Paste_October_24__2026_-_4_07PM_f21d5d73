@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKS-NEON // Next-Gen Footwear & Sneakers</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neonCyan: '#00f3ff',
+                        neonCrimson: '#ff0055',
+                        neonPurple: '#9d00ff',
+                        darkBg: '#090a0f',
+                        darkCard: '#11131f',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow-cyan': '0 0 25px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.3)',
+                        'glow-crimson': '0 0 25px rgba(255, 0, 85, 0.6), inset 0 0 10px rgba(255, 0, 85, 0.3)',
+                        'glow-purple': '0 0 25px rgba(157, 0, 255, 0.6), inset 0 0 10px rgba(157, 0, 255, 0.3)',
+                        'glow-box': '0 10px 30px -10px rgba(0, 243, 255, 0.3)',
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite alternate',
+                        'float': 'float 4s ease-in-out infinite',
+                        'spin-slow': 'spin 15s linear infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(0, 243, 255, 0.4)' },
+                            '100%': { boxShadow: '0 0 35px rgba(255, 0, 85, 0.8)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090a0f;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090a0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+
+        /* Neon Glassmorphism Effects */
+        .glass-card {
+            background: rgba(17, 19, 31, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-nav {
+            background: rgba(9, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        /* Neon Text Glow */
+        .text-glow-cyan {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.8), 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+        .text-glow-crimson {
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.8), 0 0 20px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Canvas background overlay */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Card Hover Glow Transition */
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(0, 243, 255, 0.6);
+            box-shadow: 0 15px 35px -10px rgba(0, 243, 255, 0.3), 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+
+        .fancy-card:hover {
+            border-color: rgba(255, 0, 85, 0.6);
+            box-shadow: 0 15px 35px -10px rgba(255, 0, 85, 0.3), 0 0 20px rgba(255, 0, 85, 0.2);
+        }
+
+        /* Glowing Video Overlay */
+        .video-overlay {
+            background: radial-gradient(circle, rgba(9,10,15,0.4) 0%, rgba(9,10,15,0.95) 90%);
+        }
+
+        /* Star Rating Interactive */
+        .star-rating .fa-star {
+            color: #4b5563;
+            transition: color 0.2s;
+        }
+        .star-rating .fa-star.active {
+            color: #facc15;
+            text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Background Particle Canvas for Cyber-Atmosphere -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-neonCyan to-neonCrimson flex items-center justify-center shadow-glow-cyan transform group-hover:rotate-12 transition-transform duration-300">
+                    <i class="fa-solid font-bold text-darkBg text-xl">👟</i>
+                </div>
+                <span class="text-2xl font-black tracking-wider text-white">
+                    NEON<span class="text-neonCyan text-glow-cyan">KICKS</span>
+                </span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-6 font-semibold text-sm tracking-wide">
+                <a href="#hero" class="text-neonCyan hover:text-white transition-colors duration-200">Home</a>
+                <a href="#catalog" class="text-gray-300 hover:text-neonCyan transition-colors duration-200">Catalog</a>
+                <a href="#women-shoes" class="text-gray-300 hover:text-neonCrimson transition-colors duration-200 flex items-center space-x-1">
+                    <span>Women</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-neonCrimson/20 text-neonCrimson border border-neonCrimson/40 font-bold">20</span>
+                </a>
+                <a href="#men-shoes" class="text-gray-300 hover:text-neonCyan transition-colors duration-200 flex items-center space-x-1">
+                    <span>Men</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-neonCyan/20 text-neonCyan border border-neonCyan/40 font-bold">15</span>
+                </a>
+                <a href="#boys-shoes" class="text-gray-300 hover:text-neonPurple transition-colors duration-200 flex items-center space-x-1">
+                    <span>Boys</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-neonPurple/20 text-neonPurple border border-neonPurple/40 font-bold">15</span>
+                </a>
+                <a href="#footer" class="text-gray-300 hover:text-neonCyan transition-colors duration-200">Contact Us</a>
+            </nav>
+
+            <!-- Currency Selector, Search & Actions -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                
+                <!-- Currency Toggle Switcher -->
+                <div class="relative bg-darkCard/90 rounded-xl p-1 border border-gray-700 flex items-center shadow-inner">
+                    <button id="currUSD" onclick="setCurrency('USD')" class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all text-darkBg bg-neonCyan shadow-glow-cyan">USD ($)</button>
+                    <button id="currPKR" onclick="setCurrency('PKR')" class="px-2.5 py-1 text-xs font-bold text-gray-400 hover:text-white transition-all">PKR (Rs)</button>
+                </div>
+
+                <!-- Search Box -->
+                <div class="relative hidden sm:block">
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search 50+ models..." 
+                        class="w-36 lg:w-48 bg-darkCard/80 text-sm text-gray-200 pl-8 pr-3 py-1.5 rounded-full border border-gray-700 focus:outline-none focus:border-neonCyan focus:shadow-glow-cyan transition-all duration-300">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                </div>
+
+                <!-- Shopping Cart Icon with Badge -->
+                <button id="cartBtn" class="relative p-2.5 rounded-full bg-darkCard border border-gray-700 hover:border-neonCyan text-gray-200 hover:text-neonCyan transition-all duration-300 hover:shadow-glow-cyan">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-neonCrimson text-white text-xs font-bold rounded-full flex items-center justify-center shadow-glow-crimson scale-0 transition-transform duration-300">0</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-300 hover:text-neonCyan focus:outline-none">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden glass-card border-t border-gray-800 px-6 py-4 space-y-3">
+            <a href="#hero" class="block text-neonCyan font-medium">Home</a>
+            <a href="#catalog" class="block text-gray-300 hover:text-neonCyan">All Shoes</a>
+            <a href="#women-shoes" class="block text-gray-300 hover:text-neonCrimson">Women Collection (20)</a>
+            <a href="#men-shoes" class="block text-gray-300 hover:text-neonCyan">Men Collection (15)</a>
+            <a href="#boys-shoes" class="block text-gray-300 hover:text-neonPurple">Boys Collection (15)</a>
+            <a href="#footer" class="block text-gray-300 hover:text-neonCyan">Contact Us</a>
+            <div class="pt-2">
+                <input type="text" id="searchInputMobile" oninput="handleSearchMobile()" placeholder="Search shoes..." class="w-full bg-darkCard text-sm text-gray-200 px-4 py-2 rounded-lg border border-gray-700">
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION WITH VIDEO BACKGROUND -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- Video Background Element -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
+            <video class="w-full h-full object-cover scale-105" autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1600&q=80">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-shoes-of-a-runner-in-a-race-43285-large.mp4" type="video/mp4">
+                Your browser does not support HTML5 video.
+            </video>
+            <!-- Gradient Overlay for Contrast & Glow Effect -->
+            <div class="absolute inset-0 video-overlay"></div>
+        </div>
+
+        <!-- Hero Content Overlay -->
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+            <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-darkCard/80 border border-neonCyan/40 text-neonCyan text-xs sm:text-sm font-semibold mb-6 shadow-glow-cyan animate-pulse-glow">
+                <i class="fa-solid fa-bolt text-neonCrimson"></i>
+                <span>50+ NEW GLOWING MODALS FOR MEN, WOMEN & BOYS</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-6 leading-tight">
+                STEP INTO THE <br>
+                <span class="bg-gradient-to-r from-neonCyan via-purple-500 to-neonCrimson bg-clip-text text-transparent drop-shadow-2xl">
+                    FUTURE OF FOOTWEAR
+                </span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-gray-300 text-base sm:text-lg mb-10 leading-relaxed font-light">
+                Discover 50 exclusive cybernetic sneakers, athletic sports shoes, and ultra-glowing luxury heels. Available in Pakistani Rupees (PKR) & US Dollars (USD).
+            </p>
+
+            <!-- CTA Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
+                <a href="#women-shoes" class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold bg-neonCrimson text-white shadow-glow-crimson hover:bg-white hover:text-darkBg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-venus"></i>
+                    <span>Women's (20 Shoes)</span>
+                </a>
+                <a href="#men-shoes" class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold bg-neonCyan text-darkBg shadow-glow-cyan hover:bg-white transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-mars"></i>
+                    <span>Men's (15 Shoes)</span>
+                </a>
+                <a href="#boys-shoes" class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold glass-card border border-neonPurple/60 text-neonPurple hover:bg-neonPurple hover:text-white shadow-glow-purple transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-child"></i>
+                    <span>Boys' (15 Shoes)</span>
+                </a>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto pt-8 border-t border-gray-800/80">
+                <div class="text-center">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-neonCyan">50+</p>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Unique Models</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-neonCrimson">PKR / USD</p>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Dual Currency</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-neonPurple">20 Female</p>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">High Heels & Sports</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-green-400">30 Male/Boys</p>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Sneakers & Kicks</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROMO FLASH OFFER BANNER (Glowing Countdown) -->
+    <section class="relative z-10 my-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 border border-neonPurple/50 shadow-glow-purple flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-neonPurple/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="space-y-2 text-center md:text-left">
+                <span class="text-xs font-bold uppercase tracking-widest text-neonCrimson bg-neonCrimson/10 px-3 py-1 rounded-full border border-neonCrimson/30">PAKISTAN & GLOBAL EXPRESS SHIPPING</span>
+                <h3 class="text-2xl sm:text-3xl font-bold text-white">GLOWING DROP 2026 // DUAL CURRENCY DEALS</h3>
+                <p class="text-gray-400 text-sm">Switch between <span class="text-neonCyan font-bold">USD ($)</span> and <span class="text-neonCrimson font-bold">PKR (Rs)</span> in the top navigation bar!</p>
+            </div>
+
+            <!-- Countdown Timer -->
+            <div class="flex items-center space-x-3 text-center">
+                <div class="bg-darkBg/90 border border-gray-700 px-3 py-2 rounded-xl min-w-[60px]">
+                    <span id="hours" class="text-xl sm:text-2xl font-black text-neonCyan">12</span>
+                    <p class="text-[10px] text-gray-400 uppercase">Hours</p>
+                </div>
+                <span class="text-xl font-bold text-neonPurple">:</span>
+                <div class="bg-darkBg/90 border border-gray-700 px-3 py-2 rounded-xl min-w-[60px]">
+                    <span id="minutes" class="text-xl sm:text-2xl font-black text-neonCyan">45</span>
+                    <p class="text-[10px] text-gray-400 uppercase">Mins</p>
+                </div>
+                <span class="text-xl font-bold text-neonPurple">:</span>
+                <div class="bg-darkBg/90 border border-gray-700 px-3 py-2 rounded-xl min-w-[60px]">
+                    <span id="seconds" class="text-xl sm:text-2xl font-black text-neonCrimson">00</span>
+                    <p class="text-[10px] text-gray-400 uppercase">Secs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CATALOG CONTAINER -->
+    <section id="catalog" class="relative z-10 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Quick Filter Switcher -->
+        <div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
+            <div>
+                <h2 class="text-3xl font-extrabold text-white tracking-tight">KICKS CATALOGUE (50 MODELS)</h2>
+                <p class="text-gray-400 text-sm mt-1">Showing prices in <span id="activeCurrencyText" class="text-neonCyan font-bold">USD ($)</span></p>
+            </div>
+            
+            <!-- Category Filter Buttons -->
+            <div class="flex flex-wrap gap-2 justify-center" id="filterButtons">
+                <button data-filter="all" class="filter-btn active px-4 py-2 rounded-xl font-semibold text-xs uppercase tracking-wider bg-neonCyan text-darkBg shadow-glow-cyan transition-all">All (50)</button>
+                <button data-filter="women" class="filter-btn px-4 py-2 rounded-xl font-semibold text-xs uppercase tracking-wider bg-darkCard text-gray-300 hover:text-neonCrimson border border-gray-800 transition-all">Women (20)</button>
+                <button data-filter="men" class="filter-btn px-4 py-2 rounded-xl font-semibold text-xs uppercase tracking-wider bg-darkCard text-gray-300 hover:text-neonCyan border border-gray-800 transition-all">Men (15)</button>
+                <button data-filter="boys" class="filter-btn px-4 py-2 rounded-xl font-semibold text-xs uppercase tracking-wider bg-darkCard text-gray-300 hover:text-neonPurple border border-gray-800 transition-all">Boys (15)</button>
+                <button data-filter="fancy" class="filter-btn px-4 py-2 rounded-xl font-semibold text-xs uppercase tracking-wider bg-darkCard text-gray-300 hover:text-neonCrimson border border-gray-800 transition-all">Fancy</button>
+                <button data-filter="sports" class="filter-btn px-4 py-2 rounded-xl font-semibold text-xs uppercase tracking-wider bg-darkCard text-gray-300 hover:text-neonCyan border border-gray-800 transition-all">Sports</button>
+            </div>
+        </div>
+
+        <!-- SECTION 1: WOMEN'S SHOES (20 Items) -->
+        <div id="women-shoes" class="pt-6 mb-16">
+            <div class="flex items-center space-x-3 mb-6 border-b border-gray-800 pb-3">
+                <i class="fa-solid fa-venus text-neonCrimson text-2xl"></i>
+                <h3 class="text-2xl font-bold text-white">WOMEN'S FOOTWEAR COLLECTION (20 DESIGNS)</h3>
+                <span class="text-xs bg-neonCrimson/10 text-neonCrimson border border-neonCrimson/30 px-2.5 py-0.5 rounded-full font-semibold">Fancy & Sports</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="womenGrid">
+                <!-- Dynamically injected women shoes -->
+            </div>
+        </div>
+
+        <!-- SECTION 2: MEN'S SHOES (15 Items) -->
+        <div id="men-shoes" class="pt-6 mb-16">
+            <div class="flex items-center space-x-3 mb-6 border-b border-gray-800 pb-3">
+                <i class="fa-solid fa-mars text-neonCyan text-2xl"></i>
+                <h3 class="text-2xl font-bold text-white">MEN'S FOOTWEAR COLLECTION (15 DESIGNS)</h3>
+                <span class="text-xs bg-neonCyan/10 text-neonCyan border border-neonCyan/30 px-2.5 py-0.5 rounded-full font-semibold">Athletic & Formal</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="menGrid">
+                <!-- Dynamically injected men shoes -->
+            </div>
+        </div>
+
+        <!-- SECTION 3: BOYS' SHOES (15 Items) -->
+        <div id="boys-shoes" class="pt-6">
+            <div class="flex items-center space-x-3 mb-6 border-b border-gray-800 pb-3">
+                <i class="fa-solid fa-child text-neonPurple text-2xl"></i>
+                <h3 class="text-2xl font-bold text-white">BOYS' KICKS & GLOW SNEAKERS (15 DESIGNS)</h3>
+                <span class="text-xs bg-neonPurple/10 text-neonPurple border border-neonPurple/30 px-2.5 py-0.5 rounded-full font-semibold">LED & Active</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="boysGrid">
+                <!-- Dynamically injected boys shoes -->
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE CART DRAWER -->
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-darkBg/95 backdrop-blur-2xl border-l border-neonCyan/30 z-50 transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+        <!-- Drawer Header -->
+        <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-bag-shopping text-neonCyan"></i>
+                <h3 class="text-xl font-bold text-white">Your Cyber Cart</h3>
+            </div>
+            <button id="closeCartBtn" class="text-gray-400 hover:text-white p-2 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items Container -->
+        <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <div class="text-center text-gray-500 py-12">
+                <i class="fa-solid fa-cart-flatbed text-4xl mb-3 text-gray-700"></i>
+                <p>Your shopping cart is currently empty.</p>
+            </div>
+        </div>
+
+        <!-- Cart Footer / Total -->
+        <div class="p-6 border-t border-gray-800 bg-darkCard/50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-400 font-medium">Total Amount</span>
+                <span id="cartTotal" class="text-2xl font-black text-neonCyan">$0.00</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">Express delivery in Pakistan (PKR) and worldwide (USD).</p>
+            <button id="checkoutBtn" onclick="alert('Proceeding to Cyber Checkout!')" class="w-full py-3.5 bg-gradient-to-r from-neonCyan to-neonPurple text-darkBg font-bold rounded-xl shadow-glow-cyan hover:opacity-90 transition-all flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-lock"></i>
+                <span>Proceed to Checkout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- QUICK VIEW MODAL -->
+    <div id="quickViewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-2xl w-full rounded-2xl border border-neonCyan/40 p-6 sm:p-8 relative">
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Dynamically filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER SECTION -->
+    <footer id="footer" class="relative z-10 bg-darkCard/80 border-t border-gray-800 mt-20 pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                
+                <!-- Brand Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-neonCyan to-neonCrimson flex items-center justify-center">
+                            <i class="fa-solid font-bold text-darkBg text-sm">👟</i>
+                        </div>
+                        <span class="text-xl font-black text-white">NEON<span class="text-neonCyan">KICKS</span></span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Pakistan & Global store featuring 50+ futuristic footwear designs with glowing neon accents. Easy pricing in PKR & USD.
+                    </p>
+                    <div class="flex space-x-3 pt-2">
+                        <a href="#" class="w-9 h-9 rounded-lg bg-darkBg border border-gray-700 flex items-center justify-center text-gray-300 hover:text-neonCyan hover:border-neonCyan transition-all"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-darkBg border border-gray-700 flex items-center justify-center text-gray-300 hover:text-neonCrimson hover:border-neonCrimson transition-all"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-darkBg border border-gray-700 flex items-center justify-center text-gray-300 hover:text-neonPurple hover:border-neonPurple transition-all"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-darkBg border border-gray-700 flex items-center justify-center text-gray-300 hover:text-neonCyan hover:border-neonCyan transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 tracking-wider text-sm uppercase">Quick Collections</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#women-shoes" class="hover:text-neonCrimson transition-colors">Women's Heels & Sports (20)</a></li>
+                        <li><a href="#men-shoes" class="hover:text-neonCyan transition-colors">Men's Sneakers & Formals (15)</a></li>
+                        <li><a href="#boys-shoes" class="hover:text-neonPurple transition-colors">Boys' Glow Shoes (15)</a></li>
+                        <li><a href="#catalog" class="hover:text-neonCyan transition-colors">Fancy Glowing Heels</a></li>
+                        <li><a href="#catalog" class="hover:text-neonCyan transition-colors">Athletic Sports Shoes</a></li>
+                    </ul>
+                </div>
+
+                <!-- Customer Care -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 tracking-wider text-sm uppercase">Support & Delivery</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-neonCyan transition-colors">Delivery across Pakistan (3-5 Days)</a></li>
+                        <li><a href="#" class="hover:text-neonCyan transition-colors">International Express Shipping</a></li>
+                        <li><a href="#" class="hover:text-neonCyan transition-colors">Easy Size Exchange</a></li>
+                        <li><a href="#" class="hover:text-neonCyan transition-colors">Cash on Delivery (PKR)</a></li>
+                        <li><a href="#" class="hover:text-neonCyan transition-colors">WhatsApp Support: +92 300 1234567</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter Signup -->
+                <div class="space-y-4">
+                    <h4 class="text-white font-bold tracking-wider text-sm uppercase">Cyber Discounts</h4>
+                    <p class="text-xs text-gray-400">Subscribe for early access drops and secret promo codes.</p>
+                    <form id="newsletterForm" class="space-y-2">
+                        <div class="relative">
+                            <input type="email" placeholder="Enter email address" required
+                                class="w-full bg-darkBg text-sm text-gray-200 px-4 py-2.5 rounded-xl border border-gray-700 focus:outline-none focus:border-neonCyan">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-neonCyan text-darkBg font-bold text-xs uppercase rounded-xl hover:bg-white transition-all shadow-glow-cyan">
+                            Subscribe
+                        </button>
+                    </form>
+                    <div id="newsletterMsg" class="text-xs text-green-400 hidden">✓ Subscribed to Neon Newsletter!</div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Copyright & Payment Badges -->
+            <div class="pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+                <p>&copy; 2026 NEONKICKS Store. All Rights Reserved.</p>
+                <div class="flex space-x-4 text-lg text-gray-400">
+                    <i class="fa-brands fa-cc-visa hover:text-white" title="Visa"></i>
+                    <i class="fa-brands fa-cc-mastercard hover:text-white" title="MasterCard"></i>
+                    <i class="fa-brands fa-cc-paypal hover:text-white" title="PayPal"></i>
+                    <i class="fa-solid fa-money-bill-wave hover:text-green-400" title="JazzCash / EasyPaisa / COD"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // -------------------------------------------------------------
+        // 1. CURRENCY CONVERSION CONFIGURATION
+        // 1 USD = 280 PKR (Standard Fixed Rate for dynamic conversion)
+        // -------------------------------------------------------------
+        let currentCurrency = 'USD'; 
+        const USD_TO_PKR = 280;
+
+        function setCurrency(curr) {
+            currentCurrency = curr;
+            const btnUSD = document.getElementById('currUSD');
+            const btnPKR = document.getElementById('currPKR');
+            const activeText = document.getElementById('activeCurrencyText');
+
+            if (curr === 'USD') {
+                btnUSD.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition-all text-darkBg bg-neonCyan shadow-glow-cyan";
+                btnPKR.className = "px-2.5 py-1 text-xs font-bold text-gray-400 hover:text-white transition-all";
+                activeText.textContent = "USD ($)";
+            } else {
+                btnPKR.className = "px-2.5 py-1 text-xs font-bold rounded-lg transition-all text-darkBg bg-neonCrimson shadow-glow-crimson";
+                btnUSD.className = "px-2.5 py-1 text-xs font-bold text-gray-400 hover:text-white transition-all";
+                activeText.textContent = "PKR (Rs)";
+            }
+
+            // Re-render UI elements to show updated currency symbol and numbers
+            renderProducts();
+            updateCartUI();
+        }
+
+        function formatPrice(usdPrice) {
+            if (currentCurrency === 'PKR') {
+                const pkrVal = Math.round(usdPrice * USD_TO_PKR);
+                return `Rs. ${pkrVal.toLocaleString()}`;
+            }
+            return `$${usdPrice.toFixed(2)}`;
+        }
+
+        // -------------------------------------------------------------
+        // 2. EXPANDED DATABASE: 50 SHOES TOTAL
+        // - 20 Women's Shoes
+        // - 15 Men's Shoes
+        // - 15 Boys' Shoes
+        // -------------------------------------------------------------
+        const products = [
+            // ================= 20 WOMEN'S SHOES =================
+            { id: 'w1', gender: 'women', name: 'Cyber Neon Stiletto', category: 'fancy', priceUSD: 220, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80', desc: 'Glowing edge high heel with LED trim for luxury galas.' },
+            { id: 'w2', gender: 'women', name: 'Aura Speed Female Runner', category: 'sports', priceUSD: 160, rating: 5, badge: 'NEW', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80', desc: 'Ultra-light cushion running shoes for high activity.' },
+            { id: 'w3', gender: 'women', name: 'Glow Crystal Pump', category: 'fancy', priceUSD: 250, rating: 4, badge: 'LUXURY', image: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80', desc: 'Sparkling party heel embedded with mini luminescent crystals.' },
+            { id: 'w4', gender: 'women', name: 'Pink Cyber Spark Trainer', category: 'sports', priceUSD: 140, rating: 5, badge: 'POPULAR', image: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80', desc: 'Neon pink accent sporty sneakers for daily fitness.' },
+            { id: 'w5', gender: 'women', name: 'Valkyrie Platinum Heel', category: 'fancy', priceUSD: 280, rating: 5, badge: 'EXCLUSIVE', image: 'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?auto=format&fit=crop&w=600&q=80', desc: 'Metallic silver high pumps with futuristic trim.' },
+            { id: 'w6', gender: 'women', name: 'Lumina Cloud Cushion', category: 'sports', priceUSD: 175, rating: 4, badge: 'SALE', image: 'https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?auto=format&fit=crop&w=600&q=80', desc: 'Breathable flyknit sneaker designed for long runs.' },
+            { id: 'w7', gender: 'women', name: 'Midnight Glow Bootie', category: 'fancy', priceUSD: 210, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80', desc: 'Sleek black ankle heel boot with glowing purple zipper.' },
+            { id: 'w8', gender: 'women', name: 'Neon Dash Women Sprint', category: 'sports', priceUSD: 155, rating: 4, badge: 'NEW', image: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=600&q=80', desc: 'High traction rubber sole trainer in cyber cyan glow.' },
+            { id: 'w9', gender: 'women', name: 'Velvet Glow Evening Pump', category: 'fancy', priceUSD: 230, rating: 5, badge: 'LUXURY', image: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80', desc: 'Rich velvet texture with luminescent bottom sole.' },
+            { id: 'w10', gender: 'women', name: 'Flex Neon Aero Trainer', category: 'sports', priceUSD: 130, rating: 4, badge: 'BESTSELLER', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80', desc: 'Flex-grip sole for gym sessions and urban jogging.' },
+            { id: 'w11', gender: 'women', name: 'Ruby Cyber Stiletto', category: 'fancy', priceUSD: 260, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80', desc: 'Vibrant crimson heel with ambient LED glowing trim.' },
+            { id: 'w12', gender: 'women', name: 'Zenith White Glow Sneaker', category: 'sports', priceUSD: 165, rating: 4, badge: 'NEW', image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80', desc: 'Minimalist white design with glowing neon base.' },
+            { id: 'w13', gender: 'women', name: 'Goddess Neon Wedge', category: 'fancy', priceUSD: 195, rating: 5, badge: 'TRENDING', image: 'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?auto=format&fit=crop&w=600&q=80', desc: 'Comfortable futuristic wedge sandal with lighted sole.' },
+            { id: 'w14', gender: 'women', name: 'Hyper Active Trail Shoe', category: 'sports', priceUSD: 150, rating: 4, badge: 'OUTDOOR', image: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80', desc: 'All-terrain women running sneaker with glowing strips.' },
+            { id: 'w15', gender: 'women', name: 'Diamond Glow Kitten Heel', category: 'fancy', priceUSD: 215, rating: 5, badge: 'ELEGANT', image: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=600&q=80', desc: 'Graceful low heel featuring diamond shine accents.' },
+            { id: 'w16', gender: 'women', name: 'Solar Glow Female Tennis', category: 'sports', priceUSD: 145, rating: 4, badge: 'POPULAR', image: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=600&q=80', desc: 'High court stability sports shoe in neon highlight.' },
+            { id: 'w17', gender: 'women', name: 'Prism Cyber Sandal', category: 'fancy', priceUSD: 185, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80', desc: 'Holographic glowing straps for night parties.' },
+            { id: 'w18', gender: 'women', name: 'Pulse Run Women Light', category: 'sports', priceUSD: 135, rating: 4, badge: 'LIGHT', image: 'https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?auto=format&fit=crop&w=600&q=80', desc: 'Ultra breathable gym mesh shoe with soft cushioning.' },
+            { id: 'w19', gender: 'women', name: 'Empress Gold Glow Heel', category: 'fancy', priceUSD: 290, rating: 5, badge: 'ROYAL', image: 'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?auto=format&fit=crop&w=600&q=80', desc: 'Golden metallic finish heel with bright LED border.' },
+            { id: 'w20', gender: 'women', name: 'Matrix Speed Lady Kicks', category: 'sports', priceUSD: 170, rating: 5, badge: 'PRO', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80', desc: 'Engineered sports shoe for professional female runners.' },
+
+            // ================= 15 MEN'S SHOES =================
+            { id: 'm1', gender: 'men', name: 'Cyber Runner X-100', category: 'sports', priceUSD: 190, rating: 5, badge: 'BESTSELLER', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80', desc: 'Iconic men sports sneaker with red glow bottom cushion.' },
+            { id: 'm2', gender: 'men', name: 'Hyper Velocity Pro', category: 'sports', priceUSD: 210, rating: 5, badge: 'NEW', image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80', desc: 'Sprint shoe with carbon fiber spring plate & cyan glow.' },
+            { id: 'm3', gender: 'men', name: 'Glow Monarch Formal Loafer', category: 'fancy', priceUSD: 245, rating: 4, badge: 'LUXURY', image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=600&q=80', desc: 'Italian patent black dress shoe with under-sole neon light.' },
+            { id: 'm4', gender: 'men', name: 'Phantom High-Top Cyber', category: 'sports', priceUSD: 180, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80', desc: 'Ankle support high-top sneaker for basketball & streetwear.' },
+            { id: 'm5', gender: 'men', name: 'Titanium Oxford Glow', category: 'fancy', priceUSD: 270, rating: 5, badge: 'EXCLUSIVE', image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=600&q=80', desc: 'Formal leather men oxford featuring glowing blue heel trim.' },
+            { id: 'm6', gender: 'men', name: 'Nitro Boost Men Trainer', category: 'sports', priceUSD: 165, rating: 4, badge: 'SALE', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80', desc: 'Responsive energy return boost sole for marathon runners.' },
+            { id: 'm7', gender: 'men', name: 'Neon Leather Cyber Boot', category: 'fancy', priceUSD: 235, rating: 5, badge: 'TRENDING', image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=600&q=80', desc: 'Rugged fancy leather boot with cyber luminescent piping.' },
+            { id: 'm8', gender: 'men', name: 'Stealth Blackout Run', category: 'sports', priceUSD: 150, rating: 4, badge: 'POPULAR', image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80', desc: 'Matte black shoe with subtle neon green bottom glow.' },
+            { id: 'm9', gender: 'men', name: 'Gentleman Cyber Monkstrap', category: 'fancy', priceUSD: 255, rating: 5, badge: 'ROYAL', image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=600&q=80', desc: 'Double buckle formal shoe with illuminated trim edge.' },
+            { id: 'm10', gender: 'men', name: 'Alpha Cyber Court Pro', category: 'sports', priceUSD: 175, rating: 4, badge: 'NEW', image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80', desc: 'Multi-directional grip sports sneaker for indoor games.' },
+            { id: 'm11', gender: 'men', name: 'Apex Light Runner', category: 'sports', priceUSD: 140, rating: 4, badge: 'LIGHT', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80', desc: 'Ultra lightweight jogging sneaker with glowing heel.' },
+            { id: 'm12', gender: 'men', name: 'Vanguard Cyber Derby', category: 'fancy', priceUSD: 225, rating: 5, badge: 'CLASSIC', image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=600&q=80', desc: 'Lustrous polished formal leather shoe with LED border.' },
+            { id: 'm13', gender: 'men', name: 'Magma Neon Crossfit', category: 'sports', priceUSD: 160, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80', desc: 'Heavy duty weightlifting and training shoe.' },
+            { id: 'm14', gender: 'men', name: 'Sovereign Velvet Slipper', category: 'fancy', priceUSD: 240, rating: 4, badge: 'LUXURY', image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=600&q=80', desc: 'Handcrafted embroidered slipper with soft glowing sole.' },
+            { id: 'm15', gender: 'men', name: 'Orbit Max Athletic Shoe', category: 'sports', priceUSD: 185, rating: 5, badge: 'PRO', image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80', desc: 'Full-length air unit sneaker for ultimate comfort.' },
+
+            // ================= 15 BOYS' SHOES =================
+            { id: 'b1', gender: 'boys', name: 'Junior Cyber Flash LED', category: 'sports', priceUSD: 85, rating: 5, badge: 'KIDS TOP', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Rechargeable multi-color glowing LED sneakers for kids.' },
+            { id: 'b2', gender: 'boys', name: 'Turbo Speed Boy Runner', category: 'sports', priceUSD: 75, rating: 5, badge: 'NEW', image: 'https://images.unsplash.com/photo-1507464098880-e36e3bc012b3?auto=format&fit=crop&w=600&q=80', desc: 'Flexible mesh kids sports shoes for school & playground.' },
+            { id: 'b3', gender: 'boys', name: 'Little Prince Glow Oxford', category: 'fancy', priceUSD: 95, rating: 4, badge: 'PARTY', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Cute formal shiny dress shoes with lighted bottom edge.' },
+            { id: 'b4', gender: 'boys', name: 'Sonic Charge Light Sneaker', category: 'sports', priceUSD: 80, rating: 5, badge: 'POPULAR', image: 'https://images.unsplash.com/photo-1507464098880-e36e3bc012b3?auto=format&fit=crop&w=600&q=80', desc: 'Step-activated glowing soles for energetic young boys.' },
+            { id: 'b5', gender: 'boys', name: 'Cyber Titan High-Top Boys', category: 'sports', priceUSD: 90, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Cool street-style high top sneakers with cyan accents.' },
+            { id: 'b6', gender: 'boys', name: 'Glow Loafer Junior', category: 'fancy', priceUSD: 88, rating: 4, badge: 'ELEGANT', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Easy slip-on party shoes for kids weddings & events.' },
+            { id: 'b7', gender: 'boys', name: 'Aero Dash Kids Sprint', category: 'sports', priceUSD: 70, rating: 4, badge: 'SALE', image: 'https://images.unsplash.com/photo-1507464098880-e36e3bc012b3?auto=format&fit=crop&w=600&q=80', desc: 'Velcro strap lightweight running shoe for easy wearing.' },
+            { id: 'b8', gender: 'boys', name: 'Lightning Bolt LED Kicks', category: 'sports', priceUSD: 82, rating: 5, badge: 'TRENDING', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Glowing lightning pattern side panel kids shoe.' },
+            { id: 'b9', gender: 'boys', name: 'Young Cyber Tuxedo Shoe', category: 'fancy', priceUSD: 100, rating: 5, badge: 'LUXURY', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Patent leather fancy formal shoes for young gentlemen.' },
+            { id: 'b10', gender: 'boys', name: 'Hyper Jump Basketball Boys', category: 'sports', priceUSD: 92, rating: 5, badge: 'NEW', image: 'https://images.unsplash.com/photo-1507464098880-e36e3bc012b3?auto=format&fit=crop&w=600&q=80', desc: 'Extra ankle support athletic sports shoe for active boys.' },
+            { id: 'b11', gender: 'boys', name: 'Robo Glow Runner Junior', category: 'sports', priceUSD: 78, rating: 4, badge: 'POPULAR', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Futuristic robot pattern with light-up sole.' },
+            { id: 'b12', gender: 'boys', name: 'Royal Velvet Kids Pump', category: 'fancy', priceUSD: 94, rating: 4, badge: 'PARTY', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Soft navy velvet formal shoe with glowing heel.' },
+            { id: 'b13', gender: 'boys', name: 'Flex Speed Boy Trainer', category: 'sports', priceUSD: 72, rating: 4, badge: 'LIGHT', image: 'https://images.unsplash.com/photo-1507464098880-e36e3bc012b3?auto=format&fit=crop&w=600&q=80', desc: 'Flexible sole daily school running shoe.' },
+            { id: 'b14', gender: 'boys', name: 'Neon Star Skate Sneaker', category: 'sports', priceUSD: 86, rating: 5, badge: 'HOT', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80', desc: 'Flat sole skateboarding style shoe with neon star logo.' },
+            { id: 'b15', gender: 'boys', name: 'Galaxy Light Up Kicks', category: 'sports', priceUSD: 89, rating: 5, badge: 'BESTSELLER', image: 'https://images.unsplash.com/photo-1507464098880-e36e3bc012b3?auto=format&fit=crop&w=600&q=80', desc: 'Space cosmic print sneakers with 7-color changing LEDs.' }
+        ];
+
+        // -------------------------------------------------------------
+        // 3. SHOPPING CART SYSTEM
+        // -------------------------------------------------------------
+        let cart = [];
+
+        const cartBtn = document.getElementById('cartBtn');
+        const closeCartBtn = document.getElementById('closeCartBtn');
+        const cartDrawer = document.getElementById('cartDrawer');
+        const cartBadge = document.getElementById('cartBadge');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const cartTotal = document.getElementById('cartTotal');
+
+        function toggleCart() {
+            cartDrawer.classList.toggle('translate-x-full');
+        }
+
+        cartBtn.addEventListener('click', toggleCart);
+        closeCartBtn.addEventListener('click', toggleCart);
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            updateCartUI();
+            cartDrawer.classList.remove('translate-x-full');
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        function updateQty(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) removeFromCart(productId);
+                else updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            cartBadge.textContent = totalItems;
+            if (totalItems > 0) cartBadge.classList.remove('scale-0');
+            else cartBadge.classList.add('scale-0');
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <i class="fa-solid fa-cart-flatbed text-4xl mb-3 text-gray-700"></i>
+                        <p>Your shopping cart is currently empty.</p>
+                    </div>
+                `;
+                cartTotal.textContent = formatPrice(0);
+                return;
+            }
+
+            let html = '';
+            let totalUSD = 0;
+
+            cart.forEach(item => {
+                const itemTotalUSD = item.priceUSD * item.qty;
+                totalUSD += itemTotalUSD;
+
+                html += `
+                    <div class="flex items-center space-x-3 bg-darkCard/80 p-3 rounded-xl border border-gray-800">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg border border-gray-700">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
+                            <p class="text-xs text-neonCyan font-bold mt-0.5">${formatPrice(item.priceUSD)}</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <button onclick="updateQty('${item.id}', -1)" class="w-5 h-5 bg-darkBg text-gray-300 rounded border border-gray-700 flex items-center justify-center text-xs hover:border-neonCyan">-</button>
+                                <span class="text-xs font-semibold text-white">${item.qty}</span>
+                                <button onclick="updateQty('${item.id}', 1)" class="w-5 h-5 bg-darkBg text-gray-300 rounded border border-gray-700 flex items-center justify-center text-xs hover:border-neonCyan">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart('${item.id}')" class="text-gray-500 hover:text-neonCrimson p-1 text-sm">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            cartItemsContainer.innerHTML = html;
+            cartTotal.textContent = formatPrice(totalUSD);
+        }
+
+        // -------------------------------------------------------------
+        // 4. RENDER PRODUCTS TO DOM
+        // -------------------------------------------------------------
+        function createProductCard(product) {
+            const isFancy = product.category === 'fancy';
+            const cardClass = isFancy ? 'fancy-card' : '';
+            const btnColor = isFancy 
+                ? 'bg-neonCrimson/20 border-neonCrimson/50 text-neonCrimson hover:bg-neonCrimson hover:text-white' 
+                : 'bg-neonCyan/20 border-neonCyan/50 text-neonCyan hover:bg-neonCyan hover:text-darkBg';
+
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                starsHtml += `<i class="fa-solid fa-star ${i <= product.rating ? 'active' : ''}"></i>`;
+            }
+
+            return `
+                <div class="product-card ${cardClass} glass-card rounded-2xl border border-gray-800 overflow-hidden flex flex-col justify-between group">
+                    <div class="relative overflow-hidden bg-darkBg/50 p-4 flex items-center justify-center h-48">
+                        <span class="absolute top-2 left-2 text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full border border-gray-700 bg-darkBg/80 text-white">
+                            ${product.badge}
+                        </span>
+                        
+                        <img src="${product.image}" alt="${product.name}" class="max-h-36 object-contain transform group-hover:scale-110 transition-transform duration-500">
+                        
+                        <button onclick="openQuickView('${product.id}')" class="absolute bottom-2 right-2 p-2 rounded-lg bg-darkBg/80 text-gray-300 hover:text-white hover:bg-neonCyan hover:text-darkBg transition-all opacity-0 group-hover:opacity-100 shadow-lg text-xs">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="star-rating text-[10px] mb-1 space-x-0.5">
+                                ${starsHtml}
+                            </div>
+                            <h4 class="text-sm font-bold text-white group-hover:text-neonCyan transition-colors line-clamp-1">${product.name}</h4>
+                            <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">${product.desc}</p>
+                        </div>
+
+                        <div class="mt-3 pt-3 border-t border-gray-800/80 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-gray-500 block">Price</span>
+                                <span class="text-sm font-black text-white">${formatPrice(product.priceUSD)}</span>
+                            </div>
+
+                            <button onclick="addToCart('${product.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold border ${btnColor} transition-all duration-300 flex items-center space-x-1">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProducts(filterCategory = 'all', searchQuery = '') {
+            const womenGrid = document.getElementById('womenGrid');
+            const menGrid = document.getElementById('menGrid');
+            const boysGrid = document.getElementById('boysGrid');
+
+            let filtered = products;
+
+            // Search Filter
+            if (searchQuery.trim() !== '') {
+                const q = searchQuery.toLowerCase();
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+            }
+
+            // Category Filter
+            if (filterCategory === 'women') filtered = filtered.filter(p => p.gender === 'women');
+            if (filterCategory === 'men') filtered = filtered.filter(p => p.gender === 'men');
+            if (filterCategory === 'boys') filtered = filtered.filter(p => p.gender === 'boys');
+            if (filterCategory === 'fancy') filtered = filtered.filter(p => p.category === 'fancy');
+            if (filterCategory === 'sports') filtered = filtered.filter(p => p.category === 'sports');
+
+            const womenItems = filtered.filter(p => p.gender === 'women');
+            const menItems = filtered.filter(p => p.gender === 'men');
+            const boysItems = filtered.filter(p => p.gender === 'boys');
+
+            womenGrid.innerHTML = womenItems.length > 0 
+                ? womenItems.map(p => createProductCard(p)).join('')
+                : '<p class="text-gray-500 text-sm col-span-full py-4">No matching women shoes found.</p>';
+
+            menGrid.innerHTML = menItems.length > 0 
+                ? menItems.map(p => createProductCard(p)).join('')
+                : '<p class="text-gray-500 text-sm col-span-full py-4">No matching men shoes found.</p>';
+
+            boysGrid.innerHTML = boysItems.length > 0 
+                ? boysItems.map(p => createProductCard(p)).join('')
+                : '<p class="text-gray-500 text-sm col-span-full py-4">No matching boys shoes found.</p>';
+        }
+
+        // -------------------------------------------------------------
+        // 5. QUICK VIEW MODAL
+        // -------------------------------------------------------------
+        const quickViewModal = document.getElementById('quickViewModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalContent = document.getElementById('modalContent');
+
+        function openQuickView(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div class="bg-darkBg/80 p-4 rounded-xl border border-gray-800 flex items-center justify-center">
+                        <img src="${product.image}" alt="${product.name}" class="max-h-56 object-contain">
+                    </div>
+                    <div class="space-y-4">
+                        <span class="text-xs font-bold text-neonCyan tracking-widest uppercase">${product.gender.toUpperCase()} // ${product.category.toUpperCase()} SHOE</span>
+                        <h3 class="text-2xl font-extrabold text-white">${product.name}</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">${product.desc}</p>
+                        
+                        <div class="space-y-1">
+                            <label class="text-xs text-gray-400 font-semibold block">Select Size (EU / US):</label>
+                            <select class="bg-darkBg border border-gray-700 text-sm rounded-lg p-2 text-gray-200 focus:border-neonCyan outline-none w-full">
+                                <option>EU 38 / US 6</option>
+                                <option>EU 39 / US 7</option>
+                                <option selected>EU 40 / US 8</option>
+                                <option>EU 41 / US 9</option>
+                                <option>EU 42 / US 10</option>
+                            </select>
+                        </div>
+
+                        <div class="text-3xl font-black text-neonCyan">${formatPrice(product.priceUSD)}</div>
+                        <div class="pt-2 flex gap-3">
+                            <button onclick="addToCart('${product.id}'); closeModal();" class="flex-1 py-3 bg-neonCyan text-darkBg font-bold text-sm rounded-xl shadow-glow-cyan hover:bg-white transition-all">
+                                Add to Cart (${formatPrice(product.priceUSD)})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            quickViewModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            quickViewModal.classList.add('hidden');
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // -------------------------------------------------------------
+        // 6. SEARCH & FILTER HANDLERS
+        // -------------------------------------------------------------
+        let currentFilter = 'all';
+
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-neonCyan', 'text-darkBg', 'shadow-glow-cyan');
+                    b.classList.add('bg-darkCard', 'text-gray-300');
+                });
+
+                btn.classList.remove('bg-darkCard', 'text-gray-300');
+                btn.classList.add('bg-neonCyan', 'text-darkBg', 'shadow-glow-cyan');
+
+                currentFilter = btn.dataset.filter;
+                renderProducts(currentFilter, document.getElementById('searchInput').value);
+            });
+        });
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            renderProducts(currentFilter, query);
+        }
+
+        function handleSearchMobile() {
+            const query = document.getElementById('searchInputMobile').value;
+            renderProducts(currentFilter, query);
+        }
+
+        // -------------------------------------------------------------
+        // 7. COUNTDOWN TIMER
+        // -------------------------------------------------------------
+        let hours = 12, minutes = 45, seconds = 0;
+        setInterval(() => {
+            seconds--;
+            if (seconds < 0) { seconds = 59; minutes--; }
+            if (minutes < 0) { minutes = 59; hours--; }
+            if (hours < 0) { hours = 24; }
+
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }, 1000);
+
+        // -------------------------------------------------------------
+        // 8. CANVAS PARTICLE BACKGROUND EFFECT
+        // -------------------------------------------------------------
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 243, 255, ' : 'rgba(255, 0, 85, ';
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color + this.alpha + ')';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Newsletter handler
+        document.getElementById('newsletterForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('newsletterMsg').classList.remove('hidden');
+            e.target.reset();
+        });
+
+        // Initialize Products On Load
+        window.onload = function() {
+            renderProducts();
+        };
+    </script>
+</body>
+</html>

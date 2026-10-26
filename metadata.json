@@ -1,0 +1,6 @@
+{
+  "name": "NEONKICKS - Next-Gen Footwear & Sneakers",
+  "description": "50+ glowing cyberpunk sneakers, athletic sports shoes, and luxury heels for men, women, and boys with dual currency USD and PKR support.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
